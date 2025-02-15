@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Math Game</title>
+  <link rel="stylesheet" href="style.css" type="text/css" media="all" />
+
+</head>
+
+<body>
+  <div class="main">
+    <div class="sentence">
+      <h4>Math Game</h4>
+      <h5>BODMAS</h5>
+      <h2>Bijay Khanal</h2>
+ <button type="submit" onclick="back()">Back</button>
+
+    </div>
+
+    <div class="word">
+      <div id="riddles-container"></div>
+    </div>
+ <p id="percentage">You got 0% correct answers.</p>
+
+  </div>
+<script src="main.js"></script>
+  <script>
+    const riddles = [
+   { question: "1+0", answer: "1" },
+   { question: "0-3", answer: "-3" },
+
+           { question: "5-5", answer: "0" },
+           { question: "8+9", answer: "17" },
+ { question: "600÷30", answer: "20" },
+ { question: "10×8", answer: "80" },
+ { question: "5+3+(10-8)", answer: "10" },
+ { question: "9÷9×9+9-9", answer: "9" },
+ { question: "81÷(9×9÷9)-9", answer: "0" },
+ { question: "8[8+{9-1×(8+2)÷5}]", answer: "120" },
+
+    ];
+
+    const riddlesContainer = document.getElementById('riddles-container');
+
+    riddles.forEach((riddle, index) => {
+      const riddleDiv = document.createElement('div');
+      riddleDiv.className = 'word';
+      riddleDiv.innerHTML = `
+        <h5>${ index + 1}) ${riddle.question}</h5>
+        <input type="number" id="riddle${index}" placeholder="Enter here..." oninput="checkAnswer(${index})" class="bag">
+      <div class="flex">
+        
+      <p id="result${index}" class="result">Maybe...</p>
+        <p id="accuracy${index}">Letter Accuracy: 0%</p></div>  
+
+        <hr><br />
+      `;
+      riddlesContainer.appendChild(riddleDiv);
+    });
+
+    function checkAnswer(riddleIndex) {
+      const inputId = `riddle${riddleIndex}`;
+      const resultId = `result${riddleIndex}`;
+      const inputValue = document.getElementById(inputId).value.toLowerCase();
+      const correctAnswer = riddles[riddleIndex].answer.toLowerCase(); // Use correct answer from array
+      const resultElement = document.getElementById(resultId);
+
+      let isCorrect = inputValue === correctAnswer || (correctAnswer.includes("/") && correctAnswer.split("/").includes(inputValue));
+
+      if (isCorrect) {
+        resultElement.style.color = "green";
+        resultElement.textContent = "Correct ☑";
+      } else if (inputValue === "") {
+        resultElement.textContent = "Maybe...";
+        resultElement.style.color = "#000";
+      } else {
+        resultElement.style.color = "red";
+        resultElement.textContent = "Wrong ☒";
+      }
+
+      calculatePercentage();
+      calculateLetterAccuracy(riddleIndex);
+    }
+
+    function calculatePercentage() {
+      let correctCount = 0;
+      for (let i = 0; i < riddles.length; i++) {
+        const resultElement = document.getElementById(`result${i}`);
+        if (resultElement && resultElement.textContent === "Correct ☑") {
+          correctCount++;
+        }
+      }
+      const percentage = (correctCount / riddles.length) * 100;
+      const percentageDisplay = document.getElementById("percentage");
+      if (percentageDisplay) {
+        percentageDisplay.textContent = `You got ${percentage.toFixed(0)}% correct answers.`;
+   if(percentage=="100"){
+     percentageDisplay.style.color = "green";
+   }
+      else if (percentage => "100") {
+     percentageDisplay.style.color = "red";
+   }
+     else if (percentage == "") {
+     percentageDisplay.style.color = "#000";
+   }
+      }
+    }
+
+    function calculateLetterAccuracy(riddleIndex) {
+      const inputId = `riddle${riddleIndex}`;
+      const inputValue = document.getElementById(inputId).value.toLowerCase();
+      const correctAnswer = riddles[riddleIndex].answer.toLowerCase();
+      const correctChars = correctAnswer.split("");
+      let correctLetterCount = 0;
+
+      for (let i = 0; i < Math.min(inputValue.length, correctAnswer.length); i++) {
+        if (inputValue[i] === correctChars[i]) {
+          correctLetterCount++;
+        }
+      }
+
+      let accuracyPercentage = 0;
+      if (correctAnswer.length > 0) {
+        accuracyPercentage = (correctLetterCount / correctAnswer.length) * 100;
+      }
+
+      const accuracyDisplay = document.getElementById(`accuracy${riddleIndex}`);
+      if (accuracyDisplay) {
+        accuracyDisplay.textContent = `Number Accuracy: ${accuracyPercentage.toFixed(0)}%`;
+      }
+   if(accuracyPercentage=="100"){
+     accuracyDisplay.style.color="green";
+   }
+      else if (accuracyPercentage == "") {
+     accuracyDisplay.style.color = "#000";
+   }
+     else if (accuracyPercentage => "100") {
+     accuracyDisplay.style.color = "orange";
+   }
+   
+   
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Riddle Game</title>
+  <link rel="stylesheet" href="style.css" type="text/css" media="all" />
+
+</head>
+
+<body>
+  <div class="main">
+    <div class="sentence">
+      <h4>Riddle Game</h4>
+      <h5>IQ Test</h5>
+      <h2>Bijay Khanal</h2>
+      <button type="submit" onclick="back()">Back</button>
+    </div>
+
+    <div class="word">
+      <div id="riddles-container"></div>
+    </div>
+ <p id="percentage">You got 0% correct answers.</p>
+
+  </div>
+<script src="main.js"></script>
+
+  <script>
+    const riddles = [
+           { question: "What has an eye, but cannot see?", answer: "needle" },
+      { question: "What is full of holes but still holds water?", answer: "sponge" },
+     
+      { question: "What is always coming, but never arrives?", answer: "tomorrow" },
+      { question: "What has one head, one foot, and four legs?", answer: "bed" },
+      { question: "What has to be broken before you can use it?", answer: "egg" },
+      { question: "What is always in front of you but can’t be seen?", answer: "future" },
+      { question: "What has a neck without a head?", answer: "bottle" },
+      { question: "What has a face and three hands, but no arms or legs?", answer: "clock" },
+      { question: "What gets wetter the more it dries?", answer: "towel" },
+      { question: "What has no voice but can still tell you stories?", answer: "book" },
+      { question: "What can travel the world while staying in a corner?", answer: "stamp" },
+      { question: "What has a heart that doesn't beat?", answer: "artichoke" },
+      { question: "What has a thumb and four fingers, but is not alive?", answer: "glove" },
+      { question: "What has no legs but can travel the world?", answer: "letter" },
+      { question: "What is lighter than a feather, but even the strongest person can’t hold it for more than a few minutes?", answer: "breath" },
+      { question: "I am taken from a mine and shut up in a wooden case, from which I am never released, and used by almost everybody. What am I?", answer: "pencil" },
+      { question: "What has one voice, but speaks in many languages?", answer: "radio" },
+      { question: "What has no beginning, end, or middle?", answer: "round" },
+      { question: "I have no life, but I can die. What am I?", answer: "battery" },
+      { question: "What has many teeth, but cannot bite?", answer: "comb" },
+    {question: "I 'm a animal if you cut my first letter then you get body part. What am I ?", answer: "bear"}, 
+    {question: "I have no voice, but I can mimic your every move. I have no body, but I grow tall and shrink small. I am born of light, but I thrive in darkness. What am I?", answer: "shadow"}, 
+    ];
+
+    const riddlesContainer = document.getElementById('riddles-container');
+
+    riddles.forEach((riddle, index) => {
+      const riddleDiv = document.createElement('div');
+      riddleDiv.className = 'word';
+      riddleDiv.innerHTML = `
+        <h5>${ index + 1}) ${riddle.question}</h5>
+        <input type="text" id="riddle${index}" placeholder="Enter here..." oninput="checkAnswer(${index})" class="bag">
+      <div class="flex">
+        
+      <p id="result${index}" class="result">Maybe...</p>
+        <p id="accuracy${index}">Letter Accuracy: 0%</p></div>  
+
+        <hr><br />
+      `;
+      riddlesContainer.appendChild(riddleDiv);
+    });
+
+    function checkAnswer(riddleIndex) {
+      const inputId = `riddle${riddleIndex}`;
+      const resultId = `result${riddleIndex}`;
+      const inputValue = document.getElementById(inputId).value.toLowerCase();
+      const correctAnswer = riddles[riddleIndex].answer.toLowerCase(); // Use correct answer from array
+      const resultElement = document.getElementById(resultId);
+
+      let isCorrect = inputValue === correctAnswer || (correctAnswer.includes("/") && correctAnswer.split("/").includes(inputValue));
+
+      if (isCorrect) {
+        resultElement.style.color = "green";
+        resultElement.textContent = "Correct ☑";
+      } else if (inputValue === "") {
+        resultElement.textContent = "Maybe...";
+        resultElement.style.color = "#000";
+      } else {
+        resultElement.style.color = "red";
+        resultElement.textContent = "Wrong ☒";
+      }
+
+      calculatePercentage();
+      calculateLetterAccuracy(riddleIndex);
+    }
+
+    function calculatePercentage() {
+      let correctCount = 0;
+      for (let i = 0; i < riddles.length; i++) {
+        const resultElement = document.getElementById(`result${i}`);
+        if (resultElement && resultElement.textContent === "Correct ☑") {
+          correctCount++;
+        }
+      }
+      const percentage = (correctCount / riddles.length) * 100;
+      const percentageDisplay = document.getElementById("percentage");
+      if (percentageDisplay) {
+        percentageDisplay.textContent = `You got ${percentage.toFixed(0)}% correct answers.`;
+   if(percentage=="100"){
+     percentageDisplay.style.color = "green";
+   }
+      else if (percentage => "100") {
+     percentageDisplay.style.color = "red";
+   }
+     else if (percentage == "") {
+     percentageDisplay.style.color = "#000";
+   }
+      }
+    }
+
+    function calculateLetterAccuracy(riddleIndex) {
+      const inputId = `riddle${riddleIndex}`;
+      const inputValue = document.getElementById(inputId).value.toLowerCase();
+      const correctAnswer = riddles[riddleIndex].answer.toLowerCase();
+      const correctChars = correctAnswer.split("");
+      let correctLetterCount = 0;
+
+      for (let i = 0; i < Math.min(inputValue.length, correctAnswer.length); i++) {
+        if (inputValue[i] === correctChars[i]) {
+          correctLetterCount++;
+        }
+      }
+
+      let accuracyPercentage = 0;
+      if (correctAnswer.length > 0) {
+        accuracyPercentage = (correctLetterCount / correctAnswer.length) * 100;
+      }
+
+      const accuracyDisplay = document.getElementById(`accuracy${riddleIndex}`);
+      if (accuracyDisplay) {
+        accuracyDisplay.textContent = `Letter Accuracy: ${accuracyPercentage.toFixed(0)}%`;
+      }
+   if(accuracyPercentage=="100"){
+     accuracyDisplay.style.color="green";
+   }
+      else if (accuracyPercentage == "") {
+     accuracyDisplay.style.color = "#000";
+   }
+     else if (accuracyPercentage => "100") {
+     accuracyDisplay.style.color = "orange";
+   }
+   
+   
+    }
+  </script>
+</body>
+</html>
